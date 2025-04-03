@@ -264,6 +264,13 @@
   },
   {
     "inputs": [],
+    "name": "resetAll",
+    "outputs": [],
+    "stateMutability": "nonpayable",
+    "type": "function"
+  },
+  {
+    "inputs": [],
     "name": "resetElection",
     "outputs": [],
     "stateMutability": "nonpayable",

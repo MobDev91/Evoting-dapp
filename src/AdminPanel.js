@@ -1,4 +1,4 @@
-// ✅ AdminPanel.js — Boutons désactivés dynamiquement selon l’état de l’élection
+// ✅ AdminPanel.js — avec réinitialisation complète (resetAll)
 import React, { useState, useEffect } from "react";
 import { ethers } from "ethers";
 import { adminAddress } from "./config";
@@ -29,7 +29,14 @@ function AdminPanel({ account, contract, refreshAll }) {
       setMessage("❌ Adresse invalide");
       return;
     }
+
     try {
+      const isAlreadyRegistered = await contract.isRegistered(newVoter);
+      if (isAlreadyRegistered) {
+        setMessage("⚠️ Cette adresse est déjà enregistrée");
+        return;
+      }
+
       setLoading(true);
       const tx = await contract.registerVoter(newVoter);
       await tx.wait();
@@ -37,7 +44,7 @@ function AdminPanel({ account, contract, refreshAll }) {
       setNewVoter("");
     } catch (err) {
       console.error("Erreur ajout électeur :", err);
-      setMessage("❌ Erreur lors de l'ajout de l'électeur");
+      setMessage("❌ Échec de l'ajout de l'électeur");
     } finally {
       setLoading(false);
     }
@@ -91,6 +98,23 @@ function AdminPanel({ account, contract, refreshAll }) {
     }
   };
 
+  const resetAll = async () => {
+    if (!window.confirm("⚠️ Cette action supprimera tous les électeurs et candidats. Continuer ?")) return;
+    try {
+      setLoading(true);
+      const tx = await contract.resetAll();
+      await tx.wait();
+      setMessage("✅ Réinitialisation complète effectuée");
+      refreshAll();
+      fetchElectionStatus();
+    } catch (err) {
+      console.error("Erreur resetAll :", err);
+      setMessage("❌ Échec de la réinitialisation complète");
+    } finally {
+      setLoading(false);
+    }
+  };
+
   if (!account || account.toLowerCase() !== adminAddress.toLowerCase()) return null;
 
   return (
@@ -139,6 +163,13 @@ function AdminPanel({ account, contract, refreshAll }) {
           className={`font-semibold px-4 py-2 rounded text-white ${loading || isActive ? "bg-gray-400 cursor-not-allowed" : "bg-yellow-600 hover:bg-yellow-700"}`}
         >
           🔁 Réinitialiser l’élection
+        </button>
+        <button
+          onClick={resetAll}
+          disabled={loading || isActive}
+          className={`font-semibold px-4 py-2 rounded text-white ${loading || isActive ? "bg-gray-400 cursor-not-allowed" : "bg-yellow-600 hover:bg-yellow-700"}`}
+        >
+          🧨 Réinitialisation complète
         </button>
       </div>
 
