@@ -99,7 +99,7 @@ function AdminPanel({ account, contract, refreshAll }) {
   };
 
   const resetAll = async () => {
-    if (!window.confirm("⚠️ Cette action supprimera tous les électeurs et candidats. Continuer ?")) return;
+    if (!window.confirm("⚠️ Cette action supprimera tous les électeurs. Continuer ?")) return;
     try {
       setLoading(true);
       const tx = await contract.resetAll();
