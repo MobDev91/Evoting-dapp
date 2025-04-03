@@ -101,6 +101,8 @@ function App() {
   return (
     <div className="min-h-screen bg-gray-100 text-gray-800 p-6">
       <header className="text-center mb-8">
+      <img
+    src="/logo.png" alt="Logo MIAE" className="mx-auto shadow-lg"/>
         <h1 className="text-4xl font-bold mb-2">🗳️ Système de Vote Électronique</h1>
         <p className="text-lg">Basé sur la blockchain Ethereum</p>
         <div className="mt-4">
